@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+// my-react-app/src/App.js
+import React, { useEffect, useState } from 'react';
+import FreeTextForm from './components/page-components/FreeTextForm';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const onDataReceived = (fetchedData) => {
+      console.log('called', fetchedData);
+      setData(fetchedData);
+    };
+
+    const onLoad = (state) => {
+      setIsLoading(state);
+    };
+
+    return (
+        <div className="App">
+            <header className="App-header">
+                <h1>React & Node.js piece ✌️</h1>
+                {isLoading ? (
+                  <p>I'm Loading...</p>
+              ) : (
+                  !data && <p>Enter text and submit</p>
+              )}
+              {!isLoading && data && <p>current text: <b>{data}</b></p>}
+                <FreeTextForm onDataReceived={onDataReceived} isLoading={isLoading} onLoad={onLoad} />
+            </header>
+        </div>
+    );
 }
 
 export default App;
