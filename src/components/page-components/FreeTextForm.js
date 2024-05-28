@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { fetchData } from '../../api/generic/fetch-data';
 import { postData } from '../../api/generic/post-data';
+import { deleteData } from '../../api/generic/delete-data';
 
-const FreeTextForm = ({ onDataReceived, isLoading, onLoad }) => {
+
+const FreeTextForm = ({ onDataReceived, isLoading, onLoad, textId }) => {
     const [inputValue, setInputValue] = useState('');
+    const [isDisabled, setIsDisabled] = useState(true);
 
     const handleInputChange = (event) => {
+        setIsDisabled(event.target.value === '');
         setInputValue(event.target.value);
     };
 
-    const getData = async (value) => {
+    const postDataCall = async (value) => {
         try {
             onLoad(true);
             const postedData = await postData(value);
@@ -20,7 +24,7 @@ const FreeTextForm = ({ onDataReceived, isLoading, onLoad }) => {
         }
     };
 
-    const fetchRandomData = async () => {
+    const fetchRandomDataCall = async () => {
         try {
             onLoad(true);
             const fetchedData = await fetchData();
@@ -31,13 +35,30 @@ const FreeTextForm = ({ onDataReceived, isLoading, onLoad }) => {
         }
     };
 
+    const deleteDataCall = async () => {
+        try {
+            onLoad(true);
+            const fetchedData = await deleteData(textId);
+            onDataReceived(fetchedData.message);
+            onLoad(false);
+        } catch (error) {
+            // Handle the error appropriately in your component
+        }
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault();        
-        getData(inputValue);
+        postDataCall(inputValue);
     };
 
     const handleFetchRandomRecord = () => {
-        fetchRandomData();
+        fetchRandomDataCall();
+    };
+
+    const handleDeleteRecord = () => {
+        deleteDataCall();
+        onDataReceived(undefined);
+        setInputValue('');
     };
 
     return (
@@ -54,13 +75,13 @@ const FreeTextForm = ({ onDataReceived, isLoading, onLoad }) => {
             </div>
             <button 
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isDisabled}
             >
                 Save text to DB
             </button>
             <button 
                 type="button"
-                disabled={isLoading}
+                disabled={isLoading || isDisabled}
                 onClick={() => {
                         onDataReceived(undefined);
                         setInputValue('');
@@ -84,8 +105,7 @@ const FreeTextForm = ({ onDataReceived, isLoading, onLoad }) => {
                 type="button"
                 disabled={isLoading}
                 onClick={() => {
-                        onDataReceived(undefined);
-                        setInputValue('');
+                    handleDeleteRecord();
                 }
                 }
             >

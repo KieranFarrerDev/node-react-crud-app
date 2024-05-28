@@ -1,5 +1,5 @@
 // my-react-app/src/App.js
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import FreeTextForm from './components/page-components/FreeTextForm';
 
 function App() {
@@ -7,7 +7,6 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
 
     const onDataReceived = (fetchedData) => {
-      console.log('called', fetchedData);
       setData(fetchedData);
     };
 
@@ -22,10 +21,11 @@ function App() {
                 {isLoading ? (
                   <p>I'm Loading...</p>
               ) : (
-                  !data && <p>Enter text and submit</p>
+                  !data && <p>Enter text and submit...</p>
               )}
-              {!isLoading && data && <p>current text: <b>{data}</b></p>}
-                <FreeTextForm onDataReceived={onDataReceived} isLoading={isLoading} onLoad={onLoad} />
+              {!isLoading && data && !data.error && <p>current text: <b>{data.name}</b></p>}
+              {data && data.error && <p>Error: <b>{data.error}</b></p>}
+                <FreeTextForm onDataReceived={onDataReceived} isLoading={isLoading} onLoad={onLoad} textId={data ? data.id : undefined}/>
             </header>
         </div>
     );

@@ -1,5 +1,5 @@
 {
-  "name": "my-react-app",
+  "name": "front_end",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:3000",
